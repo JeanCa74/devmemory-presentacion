@@ -1,4 +1,4 @@
-'use client'; // Obligatorio para usar Hooks en Next.js App Router
+'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
@@ -66,7 +66,36 @@ export default function Home() {
   // Si son iguales: sonar acierto, sumar puntos, sumar tiempo y limpiar volteadas.
   // Si no son iguales: esperar 800ms y volver a voltearlas.
   useEffect(() => {
-     // AQUI VA TU CÓDIGO
+     if (flippedCards.length === 2) {
+      const [first, second] = flippedCards;
+      
+      if (first.value === second.value) {
+        playSound('/match.mp3', 0.6);
+        setCards((prev) =>
+          prev.map((card) =>
+            card.id === first.id || card.id === second.id
+              ? { ...card, isMatched: true }
+              : card
+          )
+        );
+        setMatchedPairs((prev) => prev + 1);
+        setScore((prev) => prev + (10 * level));
+        setTimeLeft((prev) => prev + 5);
+        triggerTimeBonus();
+        setFlippedCards([]);
+      } else {
+        setTimeout(() => {
+          setCards((prev) =>
+            prev.map((card) =>
+              card.id === first.id || card.id === second.id
+                ? { ...card, isFlipped: false }
+                : card
+            )
+          );
+          setFlippedCards([]);
+        }, 800);
+      }
+     }
   }, [flippedCards]);
 
 
@@ -176,6 +205,24 @@ export default function Home() {
     // 2. Guardar en LocalStorage y actualizar estado.
     // 3. Lanzar confeti.
     // 4. Cerrar modal.
+    const name = playerName.trim() || "Anonimo";
+    const newRecord = { name, score, date: new Date().toLocaleDateString() };
+    const newLeaderboard = [...leaderboard, newRecord]
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+    
+    localStorage.setItem('devMemoryScores', JSON.stringify(newLeaderboard));
+    setLeaderboard(newLeaderboard);
+    
+    const duration = 3000;
+    const end = Date.now() + duration;
+    (function frame() {
+      confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+      confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+      if (Date.now() < end) requestAnimationFrame(frame);
+    }());
+
+    setIsGameOver(false);
   };
 
   const triggerTimeBonus = () => {
