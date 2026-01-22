@@ -189,9 +189,78 @@ input { width: 100%; padding: 10px; margin: 15px 0; background: #0f172a; border:
 .level-up-stats { font-size: 1.5rem; margin-top: 10px; color: #fef3c7; }
 @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+/* --- RESPONSIVE MEJORADO (CELULARES) --- */
 @media (max-width: 900px) {
-    .game-container { flex-direction: column; overflow-y: auto; height: auto; }
-    .sidebar { width: 100%; height: auto; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; }
-    .game-board-wrapper { min-height: 60vh; overflow: visible; }
-    .game-board { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+    /* 1. CRUCIAL: Permitir scroll en el cuerpo de la página en móvil */
+    body { overflow-y: auto; }
+
+    /* 2. El contenedor principal deja de forzar la altura fija */
+    .game-container {
+        flex-direction: column;
+        height: auto;         /* Crece según el contenido */
+        min-height: 100vh;    /* Ocupa al menos toda la pantalla */
+        overflow: visible;    /* Permite que el contenido se muestre */
+    }
+
+    /* 3. Compactar la barra superior (antigua sidebar) */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center; /* Centrar elementos */
+        align-items: center;
+        padding: 10px; /* Menos relleno */
+        gap: 10px;
+        /* Sombra más suave abajo */
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Ocultar elementos no esenciales para ganar espacio en pantalla */
+    .leaderboard-mini, .subtitle { display: none; }
+
+    /* Achicar textos de cabecera */
+    .sidebar header h2 { font-size: 1.2rem; margin-right: 15px; }
+    .stats-bar { flex-direction: row; margin-top: 0; gap: 15px; font-size: 1rem; }
+
+    /* 4. Controles más compactos y en una sola línea si caben */
+    .controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: auto;
+        justify-content: center;
+        margin: 0;
+        gap: 8px;
+    }
+    .mini-controls { flex: 0 0 auto; }
+    /* Botones más pequeños y delgados para móvil */
+    .btn { padding: 8px 12px; font-size: 0.85rem; }
+
+    /* 5. El envoltorio del tablero */
+    .game-board-wrapper {
+        padding: 15px 5px; /* Menos padding lateral */
+        height: auto;
+        overflow: visible;
+        /* Alinear arriba para que no quede espacio muerto si hay pocas cartas */
+        align-items: flex-start;
+        min-height: 50vh; /* Asegurar un área jugable decente */
+    }
+
+    /* 6. Las cartas en móvil: Más pequeñas */
+    .game-board {
+        gap: 8px;
+        /* Reducimos a 55px para que quepan 5 o 6 en un iPhone estándar */
+        grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+        /* Asegurar que se centren horizontalmente */
+        justify-content: center;
+        width: 95%; /* Un poco de margen lateral */
+    }
+    /* Ajustar icono en móvil */
+    .card-face { font-size: 1.5rem; border-radius: 6px; }
+
+    /* Ajustes para el menú principal en móvil */
+    .menu-screen { height: auto; min-height: 100vh; padding: 30px 10px; }
+    .title-large { font-size: 2.5rem; }
+    .btn-large { padding: 12px 30px; font-size: 1.2rem; margin: 20px 0; }
+    .menu-leaderboard { width: 100%; }
 }
